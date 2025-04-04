@@ -13,8 +13,8 @@ interface InputProps {
   disabled?: boolean;
   success?: boolean;
   error?: boolean;
-  hint?: string; // Optional hint text
-  value: string | number | undefined; // Required prop
+  hint?: string;
+  value: string | number | undefined;
   defaultValue: string |null;
 }
 

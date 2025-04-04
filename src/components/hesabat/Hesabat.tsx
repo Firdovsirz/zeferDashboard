@@ -17,11 +17,13 @@ import apiClient from "@/utils/apiClient";
 import { RootState } from "@/redux/store";
 import { useModal } from "@/hooks/useModal";
 import Input from "../form/input/InputField";
+import DoneIcon from '@mui/icons-material/Done';
 import EditIcon from '@mui/icons-material/Edit';
 import React, { useEffect, useState } from "react";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector, useDispatch } from "react-redux";
 import { ChangeEvent, ChangeEventHandler } from "preact/compat";
+import FealiyyetDropdown from "@/components/header/FealiyyetDropdown";
 
 interface userDetails {
     ad: string,
@@ -49,7 +51,8 @@ interface isPlani {
     isin_sira_sayi: number | string,
     gorulecek_isin_qisa_mezmunu: string,
     hesabat_ili: number | string,
-    icra_muddeti: string
+    icra_muddeti: string,
+    fealiyyet_novu: string
 }
 export default function BasicTableOne() {
     const [userDetails, setUserDetails] = useState<userDetails | null>(null);
@@ -254,25 +257,25 @@ export default function BasicTableOne() {
                                         isHeader
                                         className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                     >
-                                        Təqdim edənin kodu
-                                    </TableCell>
-                                    <TableCell
-                                        isHeader
-                                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                    >
                                         Təqdiim etmə tarixi
                                     </TableCell>
-                                    <TableCell
+                                    {/* <TableCell
                                         isHeader
                                         className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                     >
                                         Vaxt təhlili
-                                    </TableCell>
+                                    </TableCell> */}
                                     <TableCell
                                         isHeader
                                         className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                     >
                                         Qeyd
+                                    </TableCell>
+                                    <TableCell
+                                        isHeader
+                                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                    >
+                                        Fəaliyyət növü
                                     </TableCell>
                                     <TableCell
                                         isHeader
@@ -285,6 +288,12 @@ export default function BasicTableOne() {
                                         className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                     >
                                         Sil
+                                    </TableCell>
+                                    <TableCell
+                                        isHeader
+                                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                    >
+                                        Təsdiq et
                                     </TableCell>
                                 </TableRow>
                             </TableHeader>
@@ -300,9 +309,6 @@ export default function BasicTableOne() {
                                             <div className="flex items-center gap-3">
                                                 <div>
                                                     <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                                                        {order.icraya_mesul_shexs}
-                                                    </span>
-                                                    <span className="block text-gray-500 text-theme-xs dark:text-gray-400">
                                                         {order.icraya_mesul_shexs}
                                                     </span>
                                                 </div>
@@ -357,25 +363,30 @@ export default function BasicTableOne() {
                                             {order.icra_muddeti}
                                         </TableCell>
 
-                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                        {/* <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                             {order.icra_muddeti}
-                                        </TableCell>
+                                        </TableCell> */}
+
 
                                         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                             {order.icra_muddeti}
                                         </TableCell>
-
                                         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                            {order.icra_muddeti}
+                                            {order.fealiyyet_novu}
                                         </TableCell>
                                         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                            <div className="flex justify-center items-center bg-blue-500 rounded-md w-10 h-10 cursor-pointer">
+                                            <div onClick={openModal} className="flex justify-center items-center bg-blue-500 rounded-md w-10 h-10 cursor-pointer">
                                                 <EditIcon style={{ color: "#fff" }} />
                                             </div>
                                         </TableCell>
                                         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                             <div onClick={() => handleDelete(`${order?.isin_sira_sayi}`)} className="flex justify-center items-center bg-red-500 rounded-md w-10 h-10 cursor-pointer">
                                                 <DeleteIcon style={{ color: "#fff" }} />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                            <div className="flex justify-center items-center bg-green-500 rounded-md w-10 h-10 cursor-pointer">
+                                                <DoneIcon style={{ color: "#fff" }} />
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -385,7 +396,7 @@ export default function BasicTableOne() {
                     </div>
                 </div>
             </div>
-            <div className="flex justify-end">
+            {/* <div className="flex justify-end">
                 <button
                     onMouseOver={getMaxAge}
                     onClick={openModal}
@@ -408,7 +419,7 @@ export default function BasicTableOne() {
                     </svg>
                     Yeni Plan
                 </button>
-            </div>
+            </div> */}
             <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
                 <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
                     <div className="px-2 pr-14">
@@ -469,6 +480,9 @@ export default function BasicTableOne() {
                                             value={icraMuddeti}
                                             disabled
                                         />
+                                    </div>
+                                    <div>
+                                        <FealiyyetDropdown />
                                     </div>
                                 </div>
                             </div>

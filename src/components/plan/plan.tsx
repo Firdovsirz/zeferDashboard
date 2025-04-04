@@ -22,6 +22,7 @@ import React, { useEffect, useState } from "react";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector, useDispatch } from "react-redux";
 import { ChangeEvent, ChangeEventHandler } from "preact/compat";
+import FealiyyetDropdown from "@/components/header/FealiyyetDropdown";
 
 interface userDetails {
     ad: string,
@@ -49,7 +50,8 @@ interface isPlani {
     isin_sira_sayi: number | string,
     gorulecek_isin_qisa_mezmunu: string,
     hesabat_ili: number | string,
-    icra_muddeti: string
+    icra_muddeti: string,
+    fealiyyet_novu: string
 }
 export default function BasicTableOne() {
     const [userDetails, setUserDetails] = useState<userDetails | null>(null);
@@ -65,35 +67,37 @@ export default function BasicTableOne() {
     const hesabat_ili = 2025;
     const bolmeNovu = userDetails?.fakulte_adi;
 
+    const storedFealiyyet = localStorage.getItem('fealiyyet');
     const [formData, setFormData] = useState({
         icraya_mesul_sexs: `${userDetails?.ad} ${userDetails?.soyad}`,
         isin_qisa_mezmunu: `${isinQisaMezmunu}`,
         icra_muddeti: icraMuddeti,
         hesabat_ili: hesabat_ili,
+        fealiyyet_novu: storedFealiyyet
     });
     const [isPlani, setIsPlani] = useState<isPlani[]>([]);
     useEffect(() => {
-    const fetchIsPlani = async () => {
-        try {
-            const response = await apiClient.post('/get_is_plani', {
-                fin_kod: userDetails?.fin_kod,
-            });
-            console.log(response);
+        const fetchIsPlani = async () => {
+            try {
+                const response = await apiClient.post('/get_is_plani', {
+                    fin_kod: userDetails?.fin_kod,
+                });
+                console.log(response);
 
 
-            if (response.status >= 200 && response.status < 300) {
-                setIsPlani(response.data.data);
-            } else {
-                console.error(`Error: Received status code ${response.status}`);
+                if (response.status >= 200 && response.status < 300) {
+                    setIsPlani(response.data.data);
+                } else {
+                    console.error(`Error: Received status code ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error fetching work plan:', error);
             }
-        } catch (error) {
-            console.error('Error fetching work plan:', error);
-        }
-    };
+        };
 
-    if (userDetails?.fin_kod) {
-        fetchIsPlani();
-    }
+        if (userDetails?.fin_kod) {
+            fetchIsPlani();
+        }
     }, [userDetails?.fin_kod]);
     const handleChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setIsinQisaMezmunu(e.target.value);
@@ -112,6 +116,7 @@ export default function BasicTableOne() {
                 icra_muddeti: formData.icra_muddeti,
                 hesabat_ili: formData.hesabat_ili,
                 fin_kod: userDetails?.fin_kod,
+                fealiyyet: storedFealiyyet
             });
 
             if (response.status === 200) {
@@ -164,28 +169,28 @@ export default function BasicTableOne() {
     const handleDelete = async (id: string) => {
         // Show SweetAlert confirmation dialog
         const result = await Swal.fire({
-          title: 'İş planını silməyə əminsiniz?',
-          text: "",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#d33',
-          cancelButtonColor: '#3085d6',
-          confirmButtonText: 'Bəli',
-          cancelButtonText: 'Xeyr'
+            title: 'İş planını silməyə əminsiniz?',
+            text: "",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Bəli',
+            cancelButtonText: 'Xeyr'
         });
-    
+
         if (result.isConfirmed) {
-          try {
-            // Make DELETE request to the Flask API
-            const response = await apiClient.delete(`/delete/${id}`);
-            if (response.status === 200) {
-              Swal.fire('İş planı uğurla silindi!', '', 'success');
+            try {
+                // Make DELETE request to the Flask API
+                const response = await apiClient.delete(`/delete/${id}`);
+                if (response.status === 200) {
+                    Swal.fire('İş planı uğurla silindi!', '', 'success');
+                }
+            } catch (error) {
+                Swal.fire('Xəta!', 'Yenidən cəhd edin!.', 'error');
             }
-          } catch (error) {
-            Swal.fire('Xəta!', 'Yenidən cəhd edin!.', 'error');
-          }
         }
-      };
+    };
 
     return (
         <>
@@ -231,6 +236,12 @@ export default function BasicTableOne() {
                                         className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                     >
                                         İcra müddəti
+                                    </TableCell>
+                                    <TableCell
+                                        isHeader
+                                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                    >
+                                        Fəaliyyət növü
                                     </TableCell>
                                     <TableCell
                                         isHeader
@@ -297,6 +308,9 @@ export default function BasicTableOne() {
 
                                         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                             {order.icra_muddeti}
+                                        </TableCell>
+                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                            {order.fealiyyet_novu}
                                         </TableCell>
                                         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                             <div className="flex justify-center items-center bg-blue-500 rounded-md w-10 h-10 cursor-pointer">
@@ -399,6 +413,9 @@ export default function BasicTableOne() {
                                             value={icraMuddeti}
                                             disabled
                                         />
+                                    </div>
+                                    <div>
+                                        <FealiyyetDropdown />
                                     </div>
                                 </div>
                             </div>

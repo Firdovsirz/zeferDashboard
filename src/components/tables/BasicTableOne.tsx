@@ -48,7 +48,7 @@ export default function BasicTableOne() {
   const [teacher, setTeacher] = useState<allUsers[]>([]);
   const facCode = userDetails?.fakulte_kodu;
   const [allUsers, setAllUsers] = useState<allUsers[]>([]);
-  const [dekan, setDekan] = useState<boolean>(false); // New state for dekan
+  const [dekan, setDekan] = useState<boolean>(false);
 
   useEffect(() => {
     if (role === '1') {
@@ -95,33 +95,25 @@ export default function BasicTableOne() {
 
   const [kafMud, setKafMud] = useState<kafMud[]>([]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch('/get_kaf_mud', {
-  //         method: 'GET',
-  //       });
-
-  //       if (!response.ok) {
-  //         throw new Error('Failed to fetch data');
-  //       }
-
-  //       const result = await response.json();
-  //       setKafMud(result.data); // Assuming 'data' is the key returned by the API
-  //     } catch (error) {
-  //       // setError(error instanceof Error ? error.message : 'Unknown error');
-  //       alert(error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-  // console.log(kafMud);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await apiClient.get('/get_kaf_mud'); // No need for method: 'GET'
+  
+        setKafMud(response.data); // Axios stores response data in `response.data`
+      } catch (error: any) {
+        alert(error.response?.data?.message || error.message || 'Unknown error');
+      }
+    };
+  
+    fetchData();
+  }, []);
+  console.log(kafMud);
   
   return (
     <>
 
-      <h2>Kafedra mudiri</h2>
+      <h2 className="text-theme-m dark:text-gray-400">Kafedra mudiri</h2>
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
         <div className="max-w-full overflow-x-auto">
           <div className="min-w-[1102px]">
@@ -231,7 +223,7 @@ export default function BasicTableOne() {
         </div>
       </div>
       {/* muellim heyeti */}
-      <h2>Kafedra mudiri</h2>
+      <h2 className="text-theme-m dark:text-gray-400">Müəllim və professor heyəti</h2>
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
         <div className="max-w-full overflow-x-auto">
           <div className="min-w-[1102px]">
